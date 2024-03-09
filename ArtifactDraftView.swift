@@ -4,52 +4,63 @@
 
 import SwiftUI
 
-
-struct ArtifactSummaryView: View {
+struct ArtifactDraftView: View {
     @ObservedObject var viewModel: ArtifactsViewModel
     var artifact: ArtifactsData
     @State private var isNavigationActive = false
     
-        var body: some View {
-            VStack {
-                Button(action: {
-                    self.isNavigationActive = true
-                }) {
+    var body: some View {
+        VStack {
+            Button(action: {
+                self.isNavigationActive = true
+            }) {
+                ZStack(alignment: .bottomTrailing) {
                     Image(artifact.imageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: UIScreen.main.bounds.width / 2 - 30, height: 200)
                         .cornerRadius(10)
                         .shadow(color: .gray, radius: 4, x: 0, y: 2)
+                    
+                    CountdownTimerView(endTime: artifact.bidEndTime)
+                        .padding([.bottom, .trailing], 10)
                 }
-                
-                NavigationLink(destination: ArtifactDetailView(viewModel: viewModel, artifact: artifact), isActive: $isNavigationActive)  {
-                    EmptyView()
-                }
-                .hidden()
-
-                Text(artifact.title)
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .padding(.top, 2)
-
-                Text("Current Bid: $\(artifact.currentBid, specifier: "%.2f")")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.bottom, 2)
-
-                HStack {
-                    ForEach(0..<Int(artifact.rating.rounded()), id: \.self) { _ in
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                    }
-                }
-                .padding(.all, 10)
-                .cornerRadius(10)
-                .frame(width: UIScreen.main.bounds.width / 2 - 20)
             }
+            
+            NavigationLink(destination: DraftDetailsView(viewModel: viewModel, artifact: artifact), isActive: $isNavigationActive) {
+                EmptyView()
+            }
+            .hidden()
+            
+            Text(artifact.title)
+                .font(.headline)
+                .fontWeight(.bold)
+                .padding(.top, 2)
+            
+            Text("Current Bid: $\(artifact.currentBid, specifier: "%.2f")")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .padding(.bottom, 2)
+            
+            HStack {
+                ForEach(0..<Int(artifact.rating.rounded()), id: \.self) { _ in
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.yellow)
+                }
+            }
+            .padding(.all, 10)
+            .cornerRadius(10)
+            .frame(width: UIScreen.main.bounds.width / 2 - 20)
+            
+            // Post button below the stars
+            Button("Post") {
+                // Implement Post Action
+            }
+            .buttonStyle(PrimaryButtonStyle()) // Apply your custom button style here
+            .padding(.top, 5) // Add some padding on top for spacing
         }
     }
+}
 
 
 
@@ -58,8 +69,8 @@ struct ArtifactSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ArtifactsViewModel()
         HStack {
-            ArtifactSummaryView(viewModel: viewModel, artifact: viewModel.artifacts[0])
-            ArtifactSummaryView(viewModel: viewModel, artifact: viewModel.artifacts[1])
+            ArtifactDraftView(viewModel: viewModel, artifact: viewModel.artifacts[0])
+            ArtifactDraftView(viewModel: viewModel, artifact: viewModel.artifacts[1])
         }
         .padding(.horizontal)
         .previewLayout(.sizeThatFits)

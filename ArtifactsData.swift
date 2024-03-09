@@ -23,11 +23,12 @@ struct ArtifactsData: Identifiable, Codable {
     var imageName: String
     var rating: Double
     var isBidded: Bool
+    var bidEndTime: Date
     var imageNames: [String]
     var videoNames: [String]
 
     // Default initializer
-    init(id: UUID = UUID(), title: String, description: String, startingPrice: Double, currentBid: Double, isSold: Bool, likes: Int, dislikes: Int, currentBidder: String, timeRemaining: TimeInterval, comments: Int, imageName: String, rating: Double,isBidded: Bool, imageNames: [String], videoNames: [String]) {
+    init(id: UUID = UUID(), title: String, description: String, startingPrice: Double, currentBid: Double, isSold: Bool, likes: Int, dislikes: Int, currentBidder: String, timeRemaining: TimeInterval, comments: Int, imageName: String, rating: Double,isBidded: Bool,bidEndTime: Date, imageNames: [String], videoNames: [String]) {
         self.id = id
         self.title = title
         self.description = description
@@ -42,6 +43,7 @@ struct ArtifactsData: Identifiable, Codable {
         self.imageName = imageName
         self.rating = rating
         self.isBidded = isBidded
+        self.bidEndTime = bidEndTime
         self.imageNames = imageNames
         self.videoNames = videoNames
     }

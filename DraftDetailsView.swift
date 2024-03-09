@@ -93,11 +93,11 @@ struct MediaCarouselView: View {
 
 
 
-struct ArtifactDetailView: View {
+struct DraftDetailsView: View {
     @ObservedObject var viewModel: ArtifactsViewModel
     var artifact: ArtifactsData
     @State private var showOptions = false
-    @State private var isWatchlisted = false
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         ScrollView {
@@ -122,7 +122,12 @@ struct ArtifactDetailView: View {
                         ActionSheet(
                             title: Text("Options"),
                             buttons: [
-                                .default(Text("Download")), // Replace with actual actions
+                                .default(Text("Edit")) {
+                                    // Implement edit functionality
+                                },
+                                .destructive(Text("Delete")) {
+                                    showDeleteConfirmation = true
+                                },
                                 .cancel()
                             ]
                         )
@@ -143,21 +148,15 @@ struct ArtifactDetailView: View {
                         viewModel.updateDislikes(for: artifact.id)
                     }
                     Spacer()
-                    // Watchlist button
-                    Button(action: { isWatchlisted.toggle() }) {
-                        HStack {
-                            Image(systemName: isWatchlisted ? "eye.fill" : "eye")
-                            Text(isWatchlisted ? "Watchlisted" : "Watchlist")
-                        }
-                    }
-                    .foregroundColor(isWatchlisted ? Color.blue : Color.primary)
+                    Text("Bid End Time: \(formattedBidEndTime())")
+                        .foregroundColor(.secondary)
                 }
                 .padding(.vertical)
 
                 HStack {
                     ratingStars(rating: viewModel.calculateRating(for: artifact))
                     Spacer()
-                    Button("Bid") {
+                    Button("Post") {
                         // Implement Bid Action
                     }
                     .buttonStyle(PrimaryButtonStyle())
@@ -167,6 +166,16 @@ struct ArtifactDetailView: View {
             .padding(.horizontal)
         }
         .navigationBarTitle(Text(artifact.title), displayMode: .inline)
+        .alert(isPresented: $showDeleteConfirmation) {
+            Alert(
+                title: Text("Delete Artifact"),
+                message: Text("Are you sure you want to delete this artifact?"),
+                primaryButton: .destructive(Text("Delete")) {
+                    // Implement delete functionality
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 
     private func likeDislikeButton(imageName: String, count: Int, action: @escaping () -> Void) -> some View {
@@ -186,10 +195,17 @@ struct ArtifactDetailView: View {
             }
         }
     }
+
+    private func formattedBidEndTime() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy"
+        return dateFormatter.string(from: artifact.bidEndTime)
+    }
 }
 
 struct ArtifactDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        ArtifactDetailView(viewModel: ArtifactsViewModel(), artifact: ArtifactsData(title: "Sample Artifact", description: "This is a detailed description of the artifact.", startingPrice: 100, currentBid: 150, isSold: false, likes: 10, dislikes: 5, currentBidder: "John Doe", timeRemaining: 3600, comments: 3, imageName: "sampleImage", rating: 4.5, isBidded: false, imageNames: ["ArtifactImage", "ArtifactImage"], videoNames: ["vid"]))
+        let oneDayIntoFuture = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        ArtifactDetailView(viewModel: ArtifactsViewModel(), artifact: ArtifactsData(title: "Sample Artifact", description: "This is a detailed description of the artifact.", startingPrice: 100, currentBid: 150, isSold: false, likes: 10, dislikes: 5, currentBidder: "John Doe", timeRemaining: 3600, comments: 3, imageName: "sampleImage", rating: 4.5, isBidded: false,bidEndTime: oneDayIntoFuture, imageNames: ["ArtifactImage", "ArtifactImage"], videoNames: ["vid"]))
     }
 }

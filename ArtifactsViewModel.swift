@@ -10,6 +10,7 @@ class ArtifactsViewModel: ObservableObject {
     @Published var artifacts: [ArtifactsData] = []
     @Published var selectedArtifact: ArtifactsData?
     @Published var isLoading: Bool = false
+    let oneDayIntoFuture = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
 
     // Function to fetch artifacts data from the backend
     func fetchArtifacts() {
@@ -50,6 +51,7 @@ class ArtifactsViewModel: ObservableObject {
                 imageName: "ArtifactImage",
                 rating: 4.5,
                 isBidded: false,
+                bidEndTime: oneDayIntoFuture,
                 imageNames: ["ArtifactImage", "ArtifactImage2"],
                 videoNames: ["vid", "vid"]
             ),
@@ -68,6 +70,7 @@ class ArtifactsViewModel: ObservableObject {
                 imageName: "ArtifactImage",
                 rating: 4.0,
                 isBidded: true,
+                bidEndTime: oneDayIntoFuture,
                 imageNames: ["ArtifactImage", "ArtifactImage"],
                 videoNames: ["vid", "vid"]
             )
